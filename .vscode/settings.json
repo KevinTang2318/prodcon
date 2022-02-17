@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "queue": "cpp",
+        "iosfwd": "cpp",
+        "string": "cpp"
+    },
+    "C_Cpp.dimInactiveRegions": false
+}

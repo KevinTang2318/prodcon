@@ -1,0 +1,34 @@
+CMPUT 379 Assignment2： prodcon
+
+Project description:
+    main.cpp: main code of the program, which opens files and spawns several programs
+    Makefile: compile rules for the program
+    src:
+        common.cpp: contains all global variables, such as mutexes, conditions, etc. And also the function for calculating time.
+        common.h: header file for common.cpp
+        consumer.cpp: function for the consumer thread, takes a job from the queue and execute it
+        consumer.h: header file for consumer.cpp
+        log.cpp: functions related to the log IO, such as creating the log, writing entry to the log and closing the log
+        log.h: header file for log.cpp
+        producer.cpp: function for the producer, takes input from stdin and add work to the queue
+        producer.h: header file for producer.cpp
+        tands.c: code provided on e-class, containing Tands and Sleep function
+        tands.h: header file for tands.c
+
+Assumptions:
+  According to the description, the input will be provided either by keyboard or from a file. I assume that if provided by keyboard,
+  a EOF (ctrl+d) will be provided to indicate that the user has finished inputing.
+
+Explanation for solution:
+  I used the mutex to achieve mutual exclusion between threads. I used the pthread_cond_t condition to realize functions such as producer waiting queue
+  to have space and consumer waiting works to be available in the queue. When the producer put a work in the queue, it will send a condition signal to a consumer
+  that is waiting for work. When a consumer finish a work, it will send a signal to the producer letting it know that there's space in the queue. When the queue
+  reaches its maximum capacity (2 x nthreads), the producer will wait until there is space available.
+  For consumer, after finishing each job, it will check if the producer has finished adding all jobs and if there are still jobs in the queue to determin wiether it should exit. 
+  For producer, after adding all jobs, it will continuously send the hasWork condition to consumers untill all consumers has exited. 
+A log file is created before all threads starts. I also used a mutex to ensure mutual exclusion in editing the file. 
+
+Execute instruction:
+  To compile: Use "make" to compile with the optimize option -O. 
+              To compile normally, remove -O from the end of line 2 of Makefile (to the variable CFLAGS) and then use make to compile
+  To run: use ./prodcon <int nthreads> <int id>
